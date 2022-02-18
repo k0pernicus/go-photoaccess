@@ -1,0 +1,15 @@
+CREATE TABLE IF NOT EXISTS PHOTOS (
+    ID              SERIAL   PRIMARY KEY,
+    Data            BYTEA    NOT NULL,
+    AnnotationID    INTEGER,
+    IsAdditional    BOOLEAN  NOT NULL DEFAULT FALSE,
+    CreatedAt       TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    UpdatedAt       TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS ANNOTATIONS (
+    ID              SERIAL   PRIMARY KEY,
+    PhotoID         INTEGER  NOT NULL,
+    Text            TEXT     NOT NULL,
+    CreatedAt       TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
