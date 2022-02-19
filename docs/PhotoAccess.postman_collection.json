@@ -1,0 +1,249 @@
+{
+	"info": {
+		"_postman_id": "e6d16f31-1160-49df-a64d-75b7cedc4352",
+		"name": "PhotoAccess",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Photos",
+			"item": [
+				{
+					"name": "Create photo",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"data\": \"...\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8000/api/v1/photo",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"photo"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get specific photo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8000/api/v1/photo/<photo_id>?include_annotations=false",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"photo",
+								"<photo_id>"
+							],
+							"query": [
+								{
+									"key": "include_annotations",
+									"value": "false"
+								},
+								{
+									"key": "include_add_photos",
+									"value": "false",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all photos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8000/api/v1/photos?include_annotations=false",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"photos"
+							],
+							"query": [
+								{
+									"key": "include_annotations",
+									"value": "false"
+								},
+								{
+									"key": "include_add_photos",
+									"value": "false",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete specific photo",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8000/api/v1/photo/<photo_id>",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"photo",
+								"<photo_id>"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Annotations",
+			"item": [
+				{
+					"name": "Create annotation",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"text\": \"this is another annotation\",\r\n    \"coordinates\": {\r\n        \"x\": 10,\r\n        \"x2\": 20,\r\n        \"y\": 10,\r\n        \"y2\": 20\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8000/api/v1/photo/<photo_id>/annotation",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"photo",
+								"<photo_id>",
+								"annotation"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get specific annotation",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8000/api/v1/photo/<photo_id>/annotation/<annotation_id>",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"photo",
+								"<photo_id>",
+								"annotation",
+								"<annotation_id>"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all annotations for a photo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8000/api/v1/photo/<photo_id>/annotations",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"photo",
+								"<photo_id>",
+								"annotations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete annotation",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8000/api/v1/photo/<photo_id>/annotation/<annotation_id>",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"photo",
+								"<photo_id>",
+								"annotation",
+								"<annotation_id>"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
