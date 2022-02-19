@@ -49,12 +49,27 @@ type Coordinates struct {
 	Y2 int `json:"y2"`
 }
 
-// An annotation must be linked to a photo, and contains text
+// Annotation must be linked to a photo, and contains text
 type Annotation struct {
 	PhotoID     int         `json:"photo_id"` // Linked to an existing Photo entity
 	Content     string      `json:"content"`
 	Coordinates Coordinates `json:"coordinates"`
 	RequiredFields
+}
+
+// Annotations contains some Annotation entities in it, useful for sorting data
+type Annotations []Annotation
+
+func (a Annotations) Len() int {
+	return len(a)
+}
+
+func (a Annotations) Less(i, j int) bool {
+	return a[i].CreatedAt.Before(a[j].CreatedAt)
+}
+
+func (a Annotations) Swap(i, j int) {
+	a[i], a[j] = a[j], a[i]
 }
 
 // AnnotationCreationRequest is a simple structure that contains an annotation

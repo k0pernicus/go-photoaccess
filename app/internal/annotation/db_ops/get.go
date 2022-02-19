@@ -3,6 +3,7 @@ package db_ops
 import (
 	"context"
 	"fmt"
+	"sort"
 
 	"github.com/jackc/pgx/v4"
 	app "github.com/k0pernicus/go-photoaccess/internal"
@@ -31,7 +32,7 @@ func GetOneAnnotationWithKnownPhoto(ctx context.Context, annotationID string, ph
 
 // GetAllAnnotations returns the result of a 'GET' operation for possible multiple elements
 // and for Annotation type only
-func GetAllAnnotations(ctx context.Context, annotations *[]types.Annotation, photoID string) error {
+func GetAllAnnotations(ctx context.Context, annotations *types.Annotations, photoID string) error {
 	rows, err := app.DB.Query(ctx, fmt.Sprintf("SELECT id, content, x, x2, y, y2, photo_id, created_at, updated_at FROM %s WHERE photo_id=%s", annotationTableName, photoID))
 	if err != nil {
 		return err
@@ -48,6 +49,8 @@ func GetAllAnnotations(ctx context.Context, annotations *[]types.Annotation, pho
 		}
 		(*annotations)[i] = a
 	}
+
+	sort.Sort(annotations)
 
 	return nil
 }

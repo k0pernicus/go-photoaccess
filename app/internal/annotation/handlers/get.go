@@ -50,7 +50,7 @@ func GetAll(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	annotations := make([]types.Annotation, nbRows)
+	annotations := make(types.Annotations, nbRows)
 	if err := db_ops.GetAllAnnotations(ctx, &annotations, photoID); err != nil {
 		log.Warningf("Warning when query * for annotations: %+v", err)
 		helpers.AnswerWith(w, types.ServiceResponse{
