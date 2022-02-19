@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -31,9 +32,16 @@ func main() {
 		os.Exit(1)
 	}
 
-	appCtx := context.Background()
+	// Allow debug mode at runtime
+	debugMode := flag.Bool("debug", false, "debug mode")
+	flag.Parse()
+	if *debugMode {
+		log.SetLevel(log.DebugLevel)
+	} else {
+		log.SetLevel(log.InfoLevel)
+	}
 
-	log.SetLevel(log.DebugLevel)
+	appCtx := context.Background()
 
 	conn, err := pgxpool.Connect(appCtx, app.C.DB.String())
 	if err != nil {
