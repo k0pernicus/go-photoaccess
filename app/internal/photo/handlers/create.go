@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/k0pernicus/go-photoaccess/internal/helpers"
 	"github.com/k0pernicus/go-photoaccess/internal/photo/db_ops"
@@ -25,6 +26,17 @@ func Create(w http.ResponseWriter, r *http.Request) {
 			Response: types.PostResponse{
 				Data:    nil,
 				Message: types.CannotDecodeMessage,
+			},
+		})
+		return
+	}
+
+	if strings.TrimSpace(c.Data) == "" {
+		helpers.AnswerWith(w, types.ServiceResponse{
+			StatusCode: http.StatusUnprocessableEntity,
+			Response: types.ErrorResponse{
+				Message:   types.MissingInformation,
+				ExtraInfo: "Empty data",
 			},
 		})
 		return

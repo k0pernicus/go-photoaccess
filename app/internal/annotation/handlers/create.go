@@ -42,10 +42,10 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	if a.Text == "" || !ok || !photo_ops.PhotoExists(ctx, photoID) {
 		log.Debugf("invalid information (with photo id %s)", photoID)
 		helpers.AnswerWith(w, types.ServiceResponse{
-			StatusCode: http.StatusBadRequest,
-			Response: types.PostResponse{
-				Data:    nil,
-				Message: types.InvalidInformation,
+			StatusCode: http.StatusUnprocessableEntity,
+			Response: types.ErrorResponse{
+				Message:   types.InvalidInformation,
+				ExtraInfo: "The data are invalid (missing annotation text, or associated photo does not exists)",
 			},
 		})
 		return
