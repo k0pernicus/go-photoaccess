@@ -10,6 +10,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// CountRows returns the number of Photo entities stored in DB, useful for `make`
 func CountRows(ctx context.Context) (int, error) {
 	var count int // Default to 0
 	if err := app.DB.QueryRow(ctx, fmt.Sprintf("SELECT count(*) FROM %s", photosTableName)).Scan(&count); err != nil && err != pgx.ErrNoRows {
@@ -45,27 +46,4 @@ func GetAllPhotos(ctx context.Context, photos *[]types.Photo) error {
 	}
 
 	return nil
-}
-
-// GetAllPhotos returns the result of a 'GET' operation for possible multiple elements
-// and for Photo type only
-func GetAllPhotosWithID(ctx context.Context, key string, value string) ([]types.Photo, error) {
-	rows, err := app.DB.Query(ctx, fmt.Sprintf("SELECT * FROM %s WHERE %s = %s", photosTableName, key, value))
-	photos := []types.Photo{}
-	if err != nil {
-		return photos, err
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		var p types.Photo
-		err := rows.Scan(&p.ID, &p.Content, &p.CreatedAt)
-		if err != nil {
-			log.Warningf("cannot scan annotation with id due to error: %+v\n", err)
-			continue
-		}
-		photos = append(photos, p)
-	}
-
-	return photos, nil
 }
