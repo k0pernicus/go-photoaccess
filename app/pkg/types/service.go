@@ -6,8 +6,9 @@ type ServiceResponse struct {
 	Response   interface{} `json:"response"`
 }
 
+// ErrorResponse is specific of an error handler
 type ErrorResponse struct {
-	Message   Message `json:"message,omitempty"`
+	Message   Message `json:"message"`
 	ExtraInfo string  `json:"extra_info,omitempty"`
 }
 
