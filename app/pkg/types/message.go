@@ -16,4 +16,6 @@ const (
 	MissingInformation Message = "Missing information"
 	// When user / developer send us invalid information (in payload for example)
 	InvalidInformation Message = "Invalid information received"
+	// When an entity already exists
+	AlreadyExists = "Entity already exists"
 )

@@ -11,8 +11,3 @@ import (
 func DeleteOne(ctx context.Context, photoID string) (pgconn.CommandTag, error) {
 	return app.DB.Exec(ctx, fmt.Sprintf("DELETE from %s where id=%s", photosTableName, photoID))
 }
-
-func DeleteAdditionalPhotos(ctx context.Context, annotationID string) error {
-	_, err := app.DB.Exec(ctx, fmt.Sprintf("DELETE FROM %s WHERE is_additional=true AND annotation_id=%s", photosTableName, annotationID))
-	return err
-}

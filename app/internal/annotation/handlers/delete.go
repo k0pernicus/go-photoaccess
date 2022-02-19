@@ -1,13 +1,11 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
-	app "github.com/k0pernicus/go-photoaccess/internal"
+	"github.com/k0pernicus/go-photoaccess/internal/annotation/db_ops"
 	"github.com/k0pernicus/go-photoaccess/internal/helpers"
-	photo_ops "github.com/k0pernicus/go-photoaccess/internal/photo/db_ops"
 	"github.com/k0pernicus/go-photoaccess/pkg/types"
 	log "github.com/sirupsen/logrus"
 )
@@ -17,7 +15,7 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	vars := mux.Vars(r)
 
-	id, ok := vars["annotation_id"]
+	annotationID, ok := vars["annotation_id"]
 	if !ok {
 		log.Debug("Cannot find 'annotation_id' query parameter in user's request")
 		helpers.AnswerWith(w, types.ServiceResponse{
@@ -29,9 +27,21 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	commandTag, err := app.DB.Exec(ctx, fmt.Sprintf("DELETE from %s where id=%s", id))
+	photoID, ok := vars["photo_id"]
+	if !ok {
+		log.Debug("Cannot find 'annotation_id' query parameter in user's request")
+		helpers.AnswerWith(w, types.ServiceResponse{
+			StatusCode: http.StatusBadRequest,
+			Response: types.ExistsResponse{
+				Message: types.MissingInformation,
+			},
+		})
+		return
+	}
+
+	commandTag, err := db_ops.DeleteOne(ctx, annotationID, photoID)
 	if err != nil {
-		log.Warningf("Warning when deleting the element with id %s for annotations: %+v", id, err)
+		log.Warningf("Warning when deleting the element with id %s for annotations: %+v", annotationID, err)
 		helpers.AnswerWith(w, types.ServiceResponse{
 			StatusCode: http.StatusInternalServerError,
 			Response: types.ErrorResponse{
@@ -50,10 +60,6 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 			},
 		})
 		return
-	}
-
-	if err := photo_ops.DeleteAdditionalPhotos(ctx, id); err != nil {
-		log.Errorf("Error when trying to delete all additional photos from annotation %s", id)
 	}
 
 	helpers.AnswerWith(w, types.ServiceResponse{

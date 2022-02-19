@@ -8,8 +8,8 @@ import (
 	app "github.com/k0pernicus/go-photoaccess/internal"
 )
 
-func DeleteOne(ctx context.Context, annotationID string) (pgconn.CommandTag, error) {
-	return app.DB.Exec(ctx, fmt.Sprintf("DELETE from %s where id=%s", annotationTableName, annotationID))
+func DeleteOne(ctx context.Context, annotationID string, photoID string) (pgconn.CommandTag, error) {
+	return app.DB.Exec(ctx, fmt.Sprintf("DELETE from %s where id=%s AND photo_id=%s", annotationTableName, annotationID, photoID))
 }
 
 // TODO
@@ -18,6 +18,5 @@ func DeleteAllAnnotations(ctx context.Context, photoID string) error {
 	if err != nil {
 		return nil
 	}
-	// TODO: Delete all additional photos
 	return err
 }

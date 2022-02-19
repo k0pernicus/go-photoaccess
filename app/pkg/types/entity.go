@@ -14,36 +14,16 @@ type RequiredFields struct {
 // A Photo entity can contains annotations, or an annotation id, but it can't contains both.
 // The content of a photo must be base64.
 type Photo struct {
-	Content      string       `json:"content"` // Base64 content
-	Annotations  []Annotation `json:"annotations,omitempty"`
-	AnnotationID int          `json:"annotation_id,omitempty"`
-	IsAdditional bool         `json:"is_additional"`
+	Content     string       `json:"content"` // Base64
+	Annotations []Annotation `json:"annotations,omitempty"`
 	RequiredFields
-}
-
-// IsValid returns if the current structure is valid (and can be saved) or not,
-// as it handles a specific information that could be a danger when loading the
-// information from DB: cyclic load with AnnotationID, if the Annotation entity
-// has already been linked to the current Photo entity...
-func (p Photo) IsValid() bool {
-	return !(p.IsAdditional && len(p.Annotations) > 0)
 }
 
 // PhotoCreationRequest is a simple structure that contains all the information
 // to create a photo entity.
 // The content of the data is returned as a raw base64 string.
 type PhotoCreationRequest struct {
-	Data         string `json:"data"`
-	IsAdditional bool   `json:"is_additional,omitempty"`
-	AnnotationID int    `json:"annotation_id,omitempty"`
-}
-
-// IsValid returns if the current structure is valid from the user (and can be saved) or not,
-// as it handles a specific information that could be a danger when loading the
-// information from DB: cyclic load with AnnotationID, if the Annotation entity
-// has already been linked to the current Photo entity...
-func (p PhotoCreationRequest) IsValid() bool {
-	return p.IsAdditional && p.AnnotationID != 0 || !p.IsAdditional
+	Data string `json:"data"`
 }
 
 // PhotoCreationResponse is a simple structure that contains all the information
@@ -53,16 +33,9 @@ type PhotoCreationResponse struct {
 }
 
 // PhotoGetResponse is a structure that contains all the information
-// for non-additional Photo type
 type PhotoGetResponse struct {
 	Photo       Photo                   `json:"photo"`
 	Annotations []AnnotationGetResponse `json:"annotations,omitempty"`
-}
-
-// PhotoGetResponse is a structure that contains all the information
-// for additional Photo type ony
-type AdditionalPhotoGetResponse struct {
-	Photo Photo `json:"additional_photo"`
 }
 
 // Coordinates allows to fusion all coordinates informations about an
@@ -94,8 +67,7 @@ type AnnotationCreationRequest struct {
 // AnnotationCreationResponse is a simple structure that contains all the information
 // when an Annotation entity has been created
 type AnnotationCreationResponse struct {
-	ID               string                       `json:"id"`
-	AdditionalPhotos []AdditionalPhotoGetResponse `json:"additional_photos"`
+	ID string `json:"id"`
 }
 
 // AnnotationGetResponse is a simple structure that contains all the information

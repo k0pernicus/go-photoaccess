@@ -20,13 +20,13 @@ func CountRows(ctx context.Context) (int, error) {
 
 // GetOnePhoto returns the result of the 'GET' operation with id checking
 func GetOnePhoto(ctx context.Context, id string, photo *types.Photo) error {
-	return app.DB.QueryRow(ctx, fmt.Sprintf("SELECT * FROM %s WHERE id = %s", photosTableName, id)).Scan(&photo.ID, &photo.Content, &photo.AnnotationID, &photo.IsAdditional, &photo.CreatedAt, &photo.UpdatedAt)
+	return app.DB.QueryRow(ctx, fmt.Sprintf("SELECT * FROM %s WHERE id = %s", photosTableName, id)).Scan(&photo.ID, &photo.Content, &photo.CreatedAt, &photo.UpdatedAt)
 }
 
 // GetAllPhotos returns the result of a 'GET' operation for possible multiple elements
 // and for Photo type only
 func GetAllPhotos(ctx context.Context, photos *[]types.Photo) error {
-	rows, err := app.DB.Query(ctx, fmt.Sprintf("SELECT * FROM %s", photosTableName))
+	rows, err := app.DB.Query(ctx, fmt.Sprintf("SELECT id, content, created_at, updated_at FROM %s", photosTableName))
 	if err != nil {
 		return err
 	}
@@ -35,7 +35,7 @@ func GetAllPhotos(ctx context.Context, photos *[]types.Photo) error {
 	i := 0
 	for rows.Next() {
 		var p types.Photo
-		err := rows.Scan(&p.ID, &p.Content, &p.IsAdditional, &p.CreatedAt)
+		err := rows.Scan(&p.ID, &p.Content, &p.CreatedAt, &p.UpdatedAt)
 		if err != nil {
 			log.Warningf("cannot scan annotation with id due to error: %+v\n", err)
 			continue
@@ -59,7 +59,7 @@ func GetAllPhotosWithID(ctx context.Context, key string, value string) ([]types.
 
 	for rows.Next() {
 		var p types.Photo
-		err := rows.Scan(&p.ID, &p.Content, &p.IsAdditional, &p.CreatedAt)
+		err := rows.Scan(&p.ID, &p.Content, &p.CreatedAt)
 		if err != nil {
 			log.Warningf("cannot scan annotation with id due to error: %+v\n", err)
 			continue

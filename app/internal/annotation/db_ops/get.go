@@ -18,15 +18,20 @@ func CountRows(ctx context.Context, photoID string) (int, error) {
 	return count, nil
 }
 
-// GetOneAnnotation returns the result of the 'GET' operation with id checking
+// GetOneAnnotation retrieves the Annotation entity that asserts the id passed as parameter
 func GetOneAnnotation(ctx context.Context, id string, annotation *types.Annotation) error {
-	return app.DB.QueryRow(ctx, fmt.Sprintf("SELECT * FROM %s WHERE id = %s", annotationTableName, id)).Scan(annotation.ID, annotation.Content, annotation.PhotoID, annotation.CreatedAt, annotation.UpdatedAt)
+	return app.DB.QueryRow(ctx, fmt.Sprintf("SELECT id, content, x, x2, y, y2, photo_id, created_at, updated_at FROM %s WHERE id = %s", annotationTableName, id)).Scan(&annotation.ID, &annotation.Content, &annotation.Coordinates.X, &annotation.Coordinates.X2, &annotation.Coordinates.Y, &annotation.Coordinates.Y2, &annotation.PhotoID, &annotation.CreatedAt, &annotation.UpdatedAt)
+}
+
+// GetOneAnnotationWithKnownPhoto returns the result of the 'GET' operation with id checking of the annotation AND associated photo
+func GetOneAnnotationWithKnownPhoto(ctx context.Context, annotationID string, photoID string, annotation *types.Annotation) error {
+	return app.DB.QueryRow(ctx, fmt.Sprintf("SELECT id, content, x, x2, y, y2, photo_id, created_at, updated_at FROM %s WHERE id = %s AND photo_id=%s", annotationTableName, annotationID, photoID)).Scan(&annotation.ID, &annotation.Content, &annotation.Coordinates.X, &annotation.Coordinates.X2, &annotation.Coordinates.Y, &annotation.Coordinates.Y2, &annotation.PhotoID, &annotation.CreatedAt, &annotation.UpdatedAt)
 }
 
 // GetAllAnnotations returns the result of a 'GET' operation for possible multiple elements
 // and for Annotation type only
 func GetAllAnnotations(ctx context.Context, annotations *[]types.Annotation, photoID string) error {
-	rows, err := app.DB.Query(ctx, fmt.Sprintf("SELECT * FROM %s WHERE photo_id=%s", annotationTableName, photoID))
+	rows, err := app.DB.Query(ctx, fmt.Sprintf("SELECT id, content, x, x2, y, y2, photo_id, created_at, updated_at FROM %s WHERE photo_id=%s", annotationTableName, photoID))
 	if err != nil {
 		return err
 	}
@@ -35,7 +40,7 @@ func GetAllAnnotations(ctx context.Context, annotations *[]types.Annotation, pho
 	i := 0
 	for rows.Next() {
 		var a types.Annotation
-		err := rows.Scan(&a.ID, &a.Content, &a.CreatedAt)
+		err := rows.Scan(&a.ID, &a.Content, &a.Coordinates.X, &a.Coordinates.X2, &a.Coordinates.Y, &a.Coordinates.Y2, &a.PhotoID, &a.CreatedAt, &a.UpdatedAt)
 		if err != nil {
 			log.Warningf("cannot scan annotation with id due to error: %+v\n", err)
 			continue
@@ -48,8 +53,8 @@ func GetAllAnnotations(ctx context.Context, annotations *[]types.Annotation, pho
 
 // GetAllAnnotations returns the result of a 'GET' operation for possible multiple elements
 // and for Annotation type only
-func GetAllAnnotationsWithID(ctx context.Context, key string, value string) ([]types.Annotation, error) {
-	rows, err := app.DB.Query(ctx, fmt.Sprintf("SELECT * FROM %s WHERE %s = %s", annotationTableName, key, value))
+func GetAllAnnotationsWithPhotoID(ctx context.Context, photoID string) ([]types.Annotation, error) {
+	rows, err := app.DB.Query(ctx, fmt.Sprintf("SELECT id, content, x, x2, y, y2, created_at, updated_at FROM %s WHERE photo_id = %s", annotationTableName, photoID))
 	annotations := []types.Annotation{}
 	if err != nil {
 		return annotations, err
@@ -58,7 +63,7 @@ func GetAllAnnotationsWithID(ctx context.Context, key string, value string) ([]t
 
 	for rows.Next() {
 		var a types.Annotation
-		err := rows.Scan(&a.ID, &a.Content, &a.CreatedAt)
+		err := rows.Scan(&a.ID, &a.Content, &a.Coordinates.X, &a.Coordinates.X2, &a.Coordinates.Y, &a.Coordinates.Y2, &a.CreatedAt, &a.UpdatedAt)
 		if err != nil {
 			log.Warningf("cannot scan annotation with id due to error: %+v\n", err)
 			continue

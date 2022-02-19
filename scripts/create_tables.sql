@@ -5,26 +5,21 @@ CREATE TABLE IF NOT EXISTS ANNOTATIONS (
     x2               INTEGER  NOT NULL CHECK (x2 >= x AND x2 >= 0),
     y                INTEGER  NOT NULL CHECK (y <= y2 AND y >= 0),
     y2               INTEGER  NOT NULL CHECK (y2 >= y AND y2 >= 0),
-    created_at       TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    photo_id         INTEGER,
+    created_at       TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at       TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    UNIQUE (content, x, x2, y, y2, photo_id)
 );
 
 CREATE TABLE IF NOT EXISTS PHOTOS (
     id               SERIAL   PRIMARY KEY,
     content          TEXT     NOT NULL,
-    is_additional    BOOLEAN  NOT NULL DEFAULT FALSE,
-    annotation_id    INTEGER  DEFAULT -1,
     created_at       TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at       TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 ALTER TABLE ANNOTATIONS
-ADD CONSTRAINT photo_id
-FOREIGN KEY (id)
+ADD CONSTRAINT fk_photo_id
+FOREIGN KEY (photo_id)
 REFERENCES PHOTOS(id)
-ON DELETE CASCADE;
-
-ALTER TABLE PHOTOS
-ADD CONSTRAINT annotation_id
-FOREIGN KEY (id)
-REFERENCES ANNOTATIONS(id)
 ON DELETE CASCADE;

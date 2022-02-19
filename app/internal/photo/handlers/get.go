@@ -2,14 +2,20 @@ package handlers
 
 import (
 	"net/http"
+	"strconv"
+	"strings"
 
 	"github.com/gorilla/mux"
 	"github.com/jackc/pgx/v4"
+	annotation_db_ops "github.com/k0pernicus/go-photoaccess/internal/annotation/db_ops"
 	"github.com/k0pernicus/go-photoaccess/internal/helpers"
 	"github.com/k0pernicus/go-photoaccess/internal/photo/db_ops"
 	"github.com/k0pernicus/go-photoaccess/pkg/types"
 	log "github.com/sirupsen/logrus"
 )
+
+// The key query parameter to include all annotations in the response
+const includeAnnotationsQueryName string = "include_annotations"
 
 func GetAll(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
@@ -48,7 +54,17 @@ func GetAll(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO: Get All on photos
+	includeAnnotations := r.URL.Query().Get(includeAnnotationsQueryName)
+	if strings.ToLower(includeAnnotations) == "true" {
+		for index, photo := range photos {
+			cAnnotations, err := annotation_db_ops.GetAllAnnotationsWithPhotoID(ctx, strconv.Itoa(photo.ID))
+			if err != nil {
+				log.Warningf("cannot retrieve an annotation due with photo ID %d to error: %+v", photo.ID, err)
+				continue
+			}
+			photos[index].Annotations = cAnnotations
+		}
+	}
 
 	helpers.AnswerWith(w, types.ServiceResponse{
 		StatusCode: http.StatusOK,
@@ -60,6 +76,7 @@ func GetAll(w http.ResponseWriter, r *http.Request) {
 
 // Get returns the photo object, if it exists
 func Get(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
 	vars := mux.Vars(r)
 
 	id, ok := vars["id"]
@@ -96,6 +113,16 @@ func Get(w http.ResponseWriter, r *http.Request) {
 			},
 		})
 		return
+	}
+
+	includeAnnotations := r.URL.Query().Get(includeAnnotationsQueryName)
+	if strings.ToLower(includeAnnotations) == "true" {
+		cAnnotations, err := annotation_db_ops.GetAllAnnotationsWithPhotoID(ctx, strconv.Itoa(p.ID))
+		if err != nil {
+			log.Warningf("cannot retrieve an annotation due with photo ID %d to error: %+v", p.ID, err)
+		} else {
+			p.Annotations = cAnnotations
+		}
 	}
 
 	helpers.AnswerWith(w, types.ServiceResponse{

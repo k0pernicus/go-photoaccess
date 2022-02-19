@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"strconv"
 
-	annotation_ops "github.com/k0pernicus/go-photoaccess/internal/annotation/db_ops"
 	"github.com/k0pernicus/go-photoaccess/internal/helpers"
 	"github.com/k0pernicus/go-photoaccess/internal/photo/db_ops"
 	"github.com/k0pernicus/go-photoaccess/pkg/types"
@@ -30,37 +29,6 @@ func Create(w http.ResponseWriter, r *http.Request) {
 			},
 		})
 		return
-	}
-
-	if !c.IsValid() {
-		log.Debugf("received invalid information from User %+v", err)
-		helpers.AnswerWith(w, types.ServiceResponse{
-			StatusCode: http.StatusBadRequest,
-			Response: types.PostResponse{
-				Data:    nil,
-				Message: types.InvalidInformation,
-			},
-		})
-		return
-	}
-
-	// Store the content in DB + retrieve the ID
-	if c.IsAdditional && !annotation_ops.AnnotationExists(ctx, c.AnnotationID) {
-		log.Debugf("invalid annotation")
-		helpers.AnswerWith(w, types.ServiceResponse{
-			StatusCode: http.StatusBadRequest,
-			Response: types.PostResponse{
-				Data:    nil,
-				Message: types.InvalidInformation,
-			},
-		})
-		return
-	}
-
-	if c.IsAdditional {
-		log.Debugf("creating additional photo in DB with annotation_id %d...", c.AnnotationID)
-	} else {
-		log.Debugf("creating new photo in DB...")
 	}
 
 	id, err := db_ops.CreatePhoto(ctx, c)

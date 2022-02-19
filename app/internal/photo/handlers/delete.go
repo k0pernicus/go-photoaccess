@@ -57,9 +57,7 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 	}
 
 	helpers.AnswerWith(w, types.ServiceResponse{
-		StatusCode: http.StatusOK,
-		Response: types.DeleteResponse{
-			Message: types.OK,
-		},
+		StatusCode: http.StatusNoContent,
+		Response:   nil,
 	})
 }

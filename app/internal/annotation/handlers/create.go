@@ -2,11 +2,13 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
 
 	"github.com/gorilla/mux"
+	"github.com/jackc/pgconn"
 	"github.com/k0pernicus/go-photoaccess/internal/annotation/db_ops"
 	"github.com/k0pernicus/go-photoaccess/internal/helpers"
 	photo_ops "github.com/k0pernicus/go-photoaccess/internal/photo/db_ops"
@@ -53,6 +55,22 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	photoIDNum, _ := strconv.Atoi(photoID)
 	id, err := db_ops.CreateAnnotation(ctx, a, photoIDNum)
 	if err != nil {
+		var pgErr *pgconn.PgError
+		if errors.As(err, &pgErr) {
+			switch pgErr.Code {
+			// For the "unique" constraint
+			case "23505":
+				helpers.AnswerWith(w, types.ServiceResponse{
+					StatusCode: http.StatusConflict,
+					Response: types.PostResponse{
+						Data:    nil,
+						Message: types.AlreadyExists,
+					},
+				})
+				return
+			}
+		}
+		// else
 		log.Errorf("cannot create Annotation object due to error %+v", err)
 		helpers.AnswerWith(w, types.ServiceResponse{
 			StatusCode: http.StatusInternalServerError,
