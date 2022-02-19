@@ -2,8 +2,7 @@
 
 PhotoAccess is a test example of a Go server & RESTful API that can:
 * handles photos (a bunch of `Photo` entity),
-* handles annotations (linked to a `Photo` entity),
-* handles additional photos (linked to an `Annotation` entity).
+* handles annotations (linked to a `Photo` entity).
 
 This API does not implement full CRUD for the following entity:
 * `Photo`,
@@ -15,6 +14,8 @@ There is a Makefile to build and run the service.
 
 Basically, you could launch the service using two different commands: `make build`, which builds the Go app, and `make run`, which runs the server app.  
 Please check the `Makefile` if you want to check a bit more what it does.
+
+You can enable the debug mode using the `-debug` flag.
 
 ### Note
 
@@ -47,3 +48,45 @@ docker exec -i <CONTAINER_ID> psql -U <PSQL_USER> -d <DB_NAME> < scripts/create_
 ```
 
 You can also drop the tables using the `drop_tables.sql` script, in the same folder.
+
+Another SQL script can be used to insert 2-3 different elements in your tables but this should not
+be used anywhere else than a test environment.
+
+## Routes
+
+A Postman collection is available in `docs` in order to let you play easily with the API.
+
+### Photo
+
+For the photos, you can specify (for the `GET`) to retrieve the associated annotations or not.  
+***Note***: This is managed with the query parameter `include_annotations`, that must be `true` to return all the annotations that depend of the photo(s) you are requesting.
+
+* Get a specific photo: `/api/v1/photo/<photo_id>`, GET
+* Get all photos: `/api/v1/photos`, GET
+* Delete a specific photo: `/api/v1/photo/<photo_id>`, DELETE
+* Create a photo: `/api/v1/photo`, POST, with the following payload:
+
+```json
+{
+    "data": "..." // base64 of the image
+}
+```
+
+### Annotation
+
+* Get a specific annotation: `/api/v1/photo/<photo_id>/annotation/<annotation_id>`, GET
+* Get all annotations for a photo: `/api/v1/photo/<photo_id>/annotations`, GET
+* Delete a specific annotation: `/api/v1/photo/<photo_id>/annotation/<annotation_id>`, DELETE
+* Create an annotation: `/api/v1/photo/<photo_id>/annotation`, POST, with the following payload:
+
+```json
+{
+    "text": "this is an annotation",
+    "coordinates": {
+        "x": 10, // each represents the pixel (an integer)
+        "x2": 20,
+        "y": 10,
+        "y2": 20
+    }
+}
+```
