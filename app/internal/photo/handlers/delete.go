@@ -21,8 +21,9 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 		log.Debugf("Cannot find 'id' query parameter in user's request")
 		helpers.AnswerWith(w, types.ServiceResponse{
 			StatusCode: http.StatusBadRequest,
-			Response: types.ExistsResponse{
-				Message: types.CannotDecodeMessage,
+			Response: types.ErrorResponse{
+				Message:   types.CannotDecodeMessage,
+				ExtraInfo: "Missing 'id' query parameter",
 			},
 		})
 		return

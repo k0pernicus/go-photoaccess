@@ -20,8 +20,9 @@ func GetAll(w http.ResponseWriter, r *http.Request) {
 		log.Debug("Cannot find 'photo_id' query parameter in user's request")
 		helpers.AnswerWith(w, types.ServiceResponse{
 			StatusCode: http.StatusBadRequest,
-			Response: types.ExistsResponse{
-				Message: types.MissingInformation,
+			Response: types.ErrorResponse{
+				Message:   types.MissingInformation,
+				ExtraInfo: "Missing 'photo_id' query parameter",
 			},
 		})
 		return
@@ -79,8 +80,9 @@ func Get(w http.ResponseWriter, r *http.Request) {
 		log.Debug("Cannot find 'annotation_id' query parameter in user's request")
 		helpers.AnswerWith(w, types.ServiceResponse{
 			StatusCode: http.StatusBadRequest,
-			Response: types.ExistsResponse{
-				Message: types.MissingInformation,
+			Response: types.ErrorResponse{
+				Message:   types.MissingInformation,
+				ExtraInfo: "Missing 'annotation_id' query parameter",
 			},
 		})
 		return
@@ -91,8 +93,9 @@ func Get(w http.ResponseWriter, r *http.Request) {
 		log.Debug("Cannot find 'photo_id' query parameter in user's request")
 		helpers.AnswerWith(w, types.ServiceResponse{
 			StatusCode: http.StatusBadRequest,
-			Response: types.ExistsResponse{
-				Message: types.MissingInformation,
+			Response: types.ErrorResponse{
+				Message:   types.MissingInformation,
+				ExtraInfo: "Missing 'photo_id' query parameter",
 			},
 		})
 		return

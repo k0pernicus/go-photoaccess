@@ -20,8 +20,9 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 		log.Debug("Cannot find 'annotation_id' query parameter in user's request")
 		helpers.AnswerWith(w, types.ServiceResponse{
 			StatusCode: http.StatusBadRequest,
-			Response: types.ExistsResponse{
-				Message: types.MissingInformation,
+			Response: types.ErrorResponse{
+				Message:   types.MissingInformation,
+				ExtraInfo: "missing 'annotation_id' query parameter",
 			},
 		})
 		return
@@ -29,11 +30,12 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 
 	photoID, ok := vars["photo_id"]
 	if !ok {
-		log.Debug("Cannot find 'annotation_id' query parameter in user's request")
+		log.Debug("Cannot find 'photo_id' query parameter in user's request")
 		helpers.AnswerWith(w, types.ServiceResponse{
 			StatusCode: http.StatusBadRequest,
-			Response: types.ExistsResponse{
-				Message: types.MissingInformation,
+			Response: types.ErrorResponse{
+				Message:   types.MissingInformation,
+				ExtraInfo: "missing 'photo_id' query parameter",
 			},
 		})
 		return
