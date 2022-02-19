@@ -5,8 +5,10 @@ PhotoAccess is a test example of a Go server & RESTful API that can:
 * handles annotations (linked to a `Photo` entity).
 
 This API does not implement full CRUD for the following entity:
-* `Photo`,
-* `Annotation`.
+* `Photo`: content as base64, an ID (simple `integer`), and a creation / update date fields,
+* `Annotation`: content as a string, an ID (simple `integer` too), coordinates (in pixels, so `integer` too), and a creation / update date fields.
+
+The `Annotation` entity is linked to a `Photo` using a foreign key in DB (CASCADE to drop it if the `Photo` entity has been deleted).
 
 ## Run
 
@@ -19,7 +21,7 @@ You can enable the debug mode using the `-debug` flag.
 
 ### Note
 
-To get the only public documentation you must install and use `godoc`: `go get golang.org/x/tools/cmd/godoc` or `go install golang.org/x/tools/cmd/godoc@latest` if you have a recent go version.  
+To get the public (only) code documentation you must install and use `godoc`: `go get golang.org/x/tools/cmd/godoc` or `go install golang.org/x/tools/cmd/godoc@latest` if you have a recent go version.  
 You can build and run the public package (`pkg`) documentation locally using `make doc`, and open your web browser at [here](http://localhost:6060/pkg/github.com/k0pernicus/go-photoaccess/).
 
 ## Configuration
@@ -44,7 +46,7 @@ You can create the tables using an SQL script inside the `scripts` folder.
 
 For example, in the root folder:
 ```bash
-docker exec -i <CONTAINER_ID> psql -U <PSQL_USER> -d <DB_NAME> < scripts/create_tables.sql
+docker exec -i <CONTAINER_ID> psql -U <PSQL_USER> -d <DB_NAME> < scripts/<script_name>.sql
 ```
 
 You can also drop the tables using the `drop_tables.sql` script, in the same folder.
