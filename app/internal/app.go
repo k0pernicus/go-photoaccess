@@ -6,11 +6,17 @@ import (
 	"github.com/jackc/pgx/v4/pgxpool"
 )
 
+func init() {
+	Version = "v1"
+}
+
 var (
 	// C is the internal service configuration variable
 	C Configuration
 	// DB is the PostgreSQL connection pointer
 	DB *pgxpool.Pool
+	// Current version of the API
+	Version string
 )
 
 // AppConfiguration handles the proper configuration of the service
@@ -24,7 +30,7 @@ func (c AppConfiguration) String() string {
 	return fmt.Sprintf("%s:%s", c.Host, c.Port)
 }
 
-// DBConfiguration handles the informations about the configuration of the database
+// DBConfiguration handles the information about the configuration of the database
 type DBConfiguration struct {
 	User     string `yaml:"user"`
 	Name     string `yaml:"name"`
@@ -38,7 +44,7 @@ func (c DBConfiguration) String() string {
 	return fmt.Sprintf("postgresql://%s:%s@%s:%s/%s", c.User, c.Password, c.Host, c.Port, c.Name)
 }
 
-// Configuration handles all the informations for creation & launch
+// Configuration handles all the information for creation & launch
 type Configuration struct {
 	App AppConfiguration `yaml:"app"`
 	DB  DBConfiguration  `yaml:"db"`

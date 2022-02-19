@@ -6,6 +6,10 @@ type ServiceResponse struct {
 	Response   interface{} `json:"response"`
 }
 
+type ErrorResponse struct {
+	Message Message `json:"message,omitempty"`
+}
+
 // GetResponse is a specific structure that handles the response for a "get" handler
 type GetResponse struct {
 	Data interface{} `json:"data"`
