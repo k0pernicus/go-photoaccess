@@ -3,7 +3,6 @@ package handlers
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -25,7 +24,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	err := decoder.Decode(&a)
 
 	if err != nil {
-		fmt.Printf("Error when decoding message: %s", err.Error())
+		log.Debugf("Error when decoding message: %s", err.Error())
 		helpers.AnswerWith(w, types.ServiceResponse{
 			StatusCode: http.StatusBadRequest,
 			Response: types.PostResponse{

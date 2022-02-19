@@ -57,12 +57,14 @@ func GetAll(w http.ResponseWriter, r *http.Request) {
 	includeAnnotations := r.URL.Query().Get(includeAnnotationsQueryName)
 	if strings.ToLower(includeAnnotations) == "true" {
 		for index, photo := range photos {
-			cAnnotations, err := annotation_db_ops.GetAllAnnotationsWithPhotoID(ctx, strconv.Itoa(photo.ID))
-			if err != nil {
-				log.Warningf("cannot retrieve an annotation due with photo ID %d to error: %+v", photo.ID, err)
-				continue
+			if nbRows, _ := annotation_db_ops.CountRows(ctx, strconv.Itoa(photo.ID)); nbRows > 0 {
+				annotations := make([]types.Annotation, nbRows)
+				if err := annotation_db_ops.GetAllAnnotations(ctx, &annotations, strconv.Itoa(photo.ID)); err != nil {
+					log.Warningf("cannot retrieve an annotation due with photo ID %d to error: %+v", photo.ID, err)
+					continue
+				}
+				photos[index].Annotations = annotations
 			}
-			photos[index].Annotations = cAnnotations
 		}
 	}
 
@@ -117,12 +119,15 @@ func Get(w http.ResponseWriter, r *http.Request) {
 
 	includeAnnotations := r.URL.Query().Get(includeAnnotationsQueryName)
 	if strings.ToLower(includeAnnotations) == "true" {
-		cAnnotations, err := annotation_db_ops.GetAllAnnotationsWithPhotoID(ctx, strconv.Itoa(p.ID))
-		if err != nil {
-			log.Warningf("cannot retrieve an annotation due with photo ID %d to error: %+v", p.ID, err)
-		} else {
-			p.Annotations = cAnnotations
+		if nbRows, _ := annotation_db_ops.CountRows(ctx, strconv.Itoa(p.ID)); nbRows > 0 {
+			annotations := make([]types.Annotation, nbRows)
+			if err := annotation_db_ops.GetAllAnnotations(ctx, &annotations, strconv.Itoa(p.ID)); err == nil {
+				log.Warningf("cannot retrieve an annotation due with photo ID %d to error: %+v", p.ID, err)
+			} else {
+				p.Annotations = annotations
+			}
 		}
+
 	}
 
 	helpers.AnswerWith(w, types.ServiceResponse{

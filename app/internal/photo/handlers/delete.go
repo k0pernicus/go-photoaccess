@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -19,7 +18,7 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 
 	id, ok := vars["id"]
 	if !ok {
-		fmt.Println("Cannot find 'id' query parameter in user's request")
+		log.Debugf("Cannot find 'id' query parameter in user's request")
 		helpers.AnswerWith(w, types.ServiceResponse{
 			StatusCode: http.StatusBadRequest,
 			Response: types.ExistsResponse{

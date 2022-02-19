@@ -10,6 +10,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// CountRows returns the number of elements that matches the photoID passed as parameter, useful for `make`
 func CountRows(ctx context.Context, photoID string) (int, error) {
 	var count int // Default to 0
 	if err := app.DB.QueryRow(ctx, fmt.Sprintf("SELECT count(*) FROM %s WHERE photo_id=%s", annotationTableName, photoID)).Scan(&count); err != nil && err != pgx.ErrNoRows {
@@ -49,27 +50,4 @@ func GetAllAnnotations(ctx context.Context, annotations *[]types.Annotation, pho
 	}
 
 	return nil
-}
-
-// GetAllAnnotations returns the result of a 'GET' operation for possible multiple elements
-// and for Annotation type only
-func GetAllAnnotationsWithPhotoID(ctx context.Context, photoID string) ([]types.Annotation, error) {
-	rows, err := app.DB.Query(ctx, fmt.Sprintf("SELECT id, content, x, x2, y, y2, created_at, updated_at FROM %s WHERE photo_id = %s", annotationTableName, photoID))
-	annotations := []types.Annotation{}
-	if err != nil {
-		return annotations, err
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		var a types.Annotation
-		err := rows.Scan(&a.ID, &a.Content, &a.Coordinates.X, &a.Coordinates.X2, &a.Coordinates.Y, &a.Coordinates.Y2, &a.CreatedAt, &a.UpdatedAt)
-		if err != nil {
-			log.Warningf("cannot scan annotation with id due to error: %+v\n", err)
-			continue
-		}
-		annotations = append(annotations, a)
-	}
-
-	return annotations, nil
 }

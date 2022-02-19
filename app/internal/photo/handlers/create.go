@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -20,7 +19,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	var c types.PhotoCreationRequest
 	err := decoder.Decode(&c)
 	if err != nil {
-		fmt.Printf("Error when decoding message: %s", err.Error())
+		log.Debugf("Error when decoding message: %s", err.Error())
 		helpers.AnswerWith(w, types.ServiceResponse{
 			StatusCode: http.StatusBadRequest,
 			Response: types.PostResponse{
